@@ -1,0 +1,35 @@
+name: CI
+on: [push, pull_request]
+permissions:
+  contents: read
+  packages: read
+jobs:
+  plugin:
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: npm run check
+      - run: npm test
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tempest-codex-${{ matrix.os }}
+          include-hidden-files: true
+          path: |
+            .agents/plugins/marketplace.json
+            .codex-plugin/
+            .mcp.json
+            skills/
+            scripts/remote.js
+            lib/
+            LICENSE
+            README.md

@@ -1,0 +1,19 @@
+{
+  "name": "tempest-codex",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tempest CLI remote development and MCP plugin for Codex.",
+  "license": "MIT",
+  "author": "Altas Express LLC",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@tempest-term/remote-sdk": "^0.1.0"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "check": "node --check scripts/remote.js && node --check scripts/build.js",
+    "test": "node --test test/remote.test.js"
+  }
+}
