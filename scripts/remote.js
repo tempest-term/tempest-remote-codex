@@ -4,6 +4,7 @@ const { spawn } = require('node:child_process');
 const { parseArgs } = require('node:util');
 const readline = require('node:readline');
 const { ControlClient } = require('../lib/remote-sdk.cjs');
+let cancelPrompt;
 
 function selectServer(servers, { server, serverId }) {
   const matches = servers.filter(entry => serverId ? entry.id === serverId
@@ -34,13 +35,20 @@ function readAnswer(message, hidden = false) {
   input.resume();
   return new Promise(resolve => {
     let answer = '';
+    let finished = false;
     function finish(value) {
+      if (finished) return;
+      finished = true;
+      cancelPrompt = undefined;
       input.removeListener('keypress', onKey);
+      input.removeListener('end', onEnd);
       input.setRawMode(wasRaw);
       input.pause();
       output.write('\n');
       resolve(value);
     }
+    const onEnd = () => finish(undefined);
+    cancelPrompt = onEnd;
     function onKey(text, key = {}) {
       if (key.ctrl && ['c', 'd'].includes(key.name)) return finish(undefined);
       if (key.name === 'return' || key.name === 'enter') return finish(answer);
@@ -55,6 +63,7 @@ function readAnswer(message, hidden = false) {
       }
     }
     input.on('keypress', onKey);
+    input.once('end', onEnd);
   });
 }
 async function showPrompt(prompt) {
@@ -101,6 +110,7 @@ async function main() {
   let stopping = false;
   const stop = () => {
     stopping = true;
+    cancelPrompt?.();
     control.cancel();
     keepalive?.kill();
   };
@@ -132,6 +142,7 @@ async function main() {
     const result = await alive;
     if (!stopping) throw new Error(`SSH keepalive ended (${result.signal || result.code}). Run connect again before reopening the host.`);
   } finally {
+    cancelPrompt?.();
     if (!handedOff) control.cancel();
     keepalive?.kill();
     process.removeListener('SIGINT', stop);
