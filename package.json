@@ -1,6 +1,6 @@
 {
   "name": "tempest-remote-codex",
-  "version": "3.17.3",
+  "version": "3.17.4",
   "private": true,
   "description": "Tempest CLI remote development and MCP plugin for Codex.",
   "license": "MIT",

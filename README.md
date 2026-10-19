@@ -28,7 +28,7 @@ runs `tempest mcp` through the same local CLI.
 Install the published repository marketplace; the SDK is already bundled:
 
 ```sh
-codex plugin marketplace add tempest-term/tempest-remote-codex --ref v3.17.3
+codex plugin marketplace add tempest-term/tempest-remote-codex --ref v3.17.4
 codex plugin add tempest@tempest
 ```
 
