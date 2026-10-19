@@ -25,7 +25,19 @@ runs `tempest mcp` through the same local CLI.
 
 ## Install
 
-Build and register this repository:
+Install the published repository marketplace; the SDK is already bundled:
+
+```sh
+codex plugin marketplace add tempest-term/tempest-remote-codex --ref v3.17.3
+codex plugin add tempest@tempest
+```
+
+Or download the ZIP from [GitHub Releases](https://github.com/tempest-term/tempest-remote-codex/releases/latest),
+extract it, and run the two `codex plugin` commands below from its directory.
+The plugin needs Tempest CLI on PATH. No npm registry authentication is needed
+to install either distribution.
+
+For source development, build and register this repository:
 
 ```sh
 npm ci
@@ -43,9 +55,10 @@ Set `NODE_AUTH_TOKEN` to a GitHub token with `read:packages`. CI uses
 `GITHUB_TOKEN` with `packages: read`; grant this repository Actions access in
 the SDK package settings. Built plugin artifacts include the SDK, so plugin
 users do not need a registry token.
-Build before installing: `lib/` bundles the SDK entry point and its license so
-the installed plugin works without `node_modules`. CI also supplies a built
-plugin artifact. Install a complete built artifact, not only the skill files.
+The committed `lib/` bundle contains the SDK entry point and its license so the
+installed plugin works without `node_modules`. CI rebuilds it from the locked
+npm dependency and checks that it matches. Refresh the bundle with `npm run build`
+when updating SDK. CI also supplies a built plugin artifact.
 For a downloaded built artifact, extract it and run only the two `codex plugin`
 commands from its directory; npm and registry authentication are only needed
 when building from source.
@@ -97,6 +110,10 @@ Tempest CLI manages the Include in `~/.ssh/config`, credentials, keys, proxy
 configuration and session lifetime. The plugin never reads private session
 descriptors or exports upstream credentials. Run the helper on the local
 desktop, not inside a remote project.
+
+New CLI connections use readable aliases, such as
+`tempest-ubuntu-cloudnet-6e0f3044c311`. Existing saved connections keep their
+assigned names. The plugin uses the alias returned by CLI without decoding it.
 
 ## Validation
 

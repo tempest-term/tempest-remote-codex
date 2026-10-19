@@ -1,0 +1,31 @@
+name: Release
+on:
+  push:
+    tags: ['v*']
+permissions:
+  contents: read
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: read
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+      - name: Verify version
+        run: node -e 'if (process.env.GITHUB_REF_NAME !== "v" + require("./package.json").version) throw new Error("Tag must match package version")'
+      - run: npm ci --no-audit --no-fund
+      - run: npm run build
+      - run: git diff --exit-code -- lib
+      - run: npm run check
+      - run: npm test
+      - run: python3 scripts/package.py
+      - name: Publish plugin archive
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "$GITHUB_REF_NAME" dist/tempest-remote-codex-*.zip --verify-tag --title "Tempest Remote for Codex $GITHUB_REF_NAME" --notes-file RELEASE_NOTES.md

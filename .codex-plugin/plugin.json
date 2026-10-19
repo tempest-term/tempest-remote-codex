@@ -1,11 +1,19 @@
 {
   "name": "tempest",
-  "version": "0.1.0",
+  "version": "3.17.3",
   "description": "Use Tempest CLI for saved SSH servers, terminal automation, and Codex remote development.",
   "author": {
     "name": "Altas Express LLC"
   },
   "homepage": "https://gotempest.app",
   "skills": "./skills/",
-  "mcpServers": "./.mcp.json"
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Tempest",
+    "shortDescription": "Saved SSH servers, remote development and terminal tools through Tempest CLI.",
+    "developerName": "Altas Express LLC",
+    "websiteURL": "https://gotempest.app",
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/icon.png"
+  }
 }

@@ -18,16 +18,18 @@ jobs:
           node-version: '22'
       - run: npm ci --no-audit --no-fund
       - run: npm run build
+      - run: git diff --exit-code -- lib
       - run: npm run check
       - run: npm test
       - uses: actions/upload-artifact@v4
         with:
-          name: tempest-codex-${{ matrix.os }}
+          name: tempest-remote-codex-${{ matrix.os }}
           include-hidden-files: true
           path: |
             .agents/plugins/marketplace.json
             .codex-plugin/
             .mcp.json
+            assets/
             skills/
             scripts/remote.js
             lib/
